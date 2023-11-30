@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
+  activateAccountByOTP,
+  activation,
   createUser,
   getLoggedInUser,
   loginUser,
@@ -31,6 +33,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // createuser
       .addCase(createUser.pending, (state, action) => {
         state.loader = true;
       })
@@ -42,16 +45,43 @@ const authSlice = createSlice({
         state.message = action.payload.message;
         state.loader = false;
       })
-      .addCase(loginUser.rejected, (state, action) => {
+      // activateAccountByOTP
+      .addCase(activateAccountByOTP.pending, (state, action) => {
+        state.loader = true;
+      })
+      .addCase(activateAccountByOTP.rejected, (state, action) => {
         state.error = action.error.message;
+        state.loader = false;
+      })
+      .addCase(activateAccountByOTP.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+        state.loader = false;
+      })
+      // activateAccountByLINK
+      .addCase(activation.pending, (state, action) => {
+        state.loader = true;
+      })
+      .addCase(activation.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.loader = false;
+      })
+      .addCase(activation.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+        state.loader = false;
+      })
+      /// user login
+      .addCase(loginUser.pending, (state, action) => {
+        state.loader = true;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.message = action.payload.message;
         state.user = action.payload.user;
+        state.loader = false;
         localStorage.setItem("user", JSON.stringify(action.payload.user));
       })
-      .addCase(logoutUser.rejected, (state, action) => {
+      .addCase(loginUser.rejected, (state, action) => {
         state.error = action.error.message;
+        state.loader = false;
       })
       .addCase(logoutUser.fulfilled, (state, action) => {
         state.message = action.payload.message;

@@ -4,31 +4,41 @@ import Home from "../components/pages/Home";
 import Login from "../components/pages/Login";
 import Register from "../components/pages/Register";
 import ResetPassword from "../components/pages/ResetPassword";
+import PublicGard from "./PublicGard";
 
 // create public router
 const publicRouter = [
   {
-    element: <Layout />,
+    element: <PublicGard />,
     children: [
       {
-        path: "/login",
-        element: <Login />,
-      },
-      {
-        path: "/register",
-        element: <Register />,
-      },
-      {
-        path: "/resetpassword",
-        element: <ResetPassword />,
-      },
-      // {
-      // path: "/forgot",
-      // element: <Forgot />,
-      // },
-      {
-        path: "/activation",
-        element: <Activation />,
+        element: <Layout />,
+        children: [
+          {
+            path: "/login",
+            element: <Login />,
+          },
+          {
+            path: "/register",
+            element: <Register />,
+          },
+          {
+            path: "/resetpassword",
+            element: <ResetPassword />,
+          },
+          // {
+          // path: "/forgot",
+          // element: <Forgot />,
+          // },
+          {
+            path: "/activation/:paramstoken",
+            element: <Activation />,
+          },
+          {
+            path: "/activation",
+            element: <Activation />,
+          },
+        ],
       },
     ],
   },

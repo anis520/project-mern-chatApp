@@ -4,6 +4,7 @@ import axios from "axios";
 // register user
 export const createUser = createAsyncThunk("auth/createUser", async (data) => {
   try {
+    console.log(data);
     const response = await axios.post(
       "http://localhost:9000/api/v1/register",
       data,
@@ -22,9 +23,10 @@ export const createUser = createAsyncThunk("auth/createUser", async (data) => {
 export const activateAccountByOTP = createAsyncThunk(
   "auth/activateAccountByOTP",
   async (data) => {
+    console.log(data);
     try {
       const response = await axios.post(
-        `http://localhost:5050/api/v1/auth/activation-by-otp/${data.token}`,
+        `http://localhost:9000/api/v1/activation-by-otp/${data.token}`,
         { otp: data.otp },
         {
           withCredentials: true,
@@ -42,7 +44,7 @@ export const activateAccountByOTP = createAsyncThunk(
 export const loginUser = createAsyncThunk("auth/loginUser", async (data) => {
   try {
     const response = await axios.post(
-      "http://localhost:5050/api/v1/auth/login",
+      "http://localhost:9000/api/v1/login",
       data,
       {
         withCredentials: true,
@@ -55,7 +57,24 @@ export const loginUser = createAsyncThunk("auth/loginUser", async (data) => {
   }
 });
 
-// Login user
+// actication by link user
+export const activation = createAsyncThunk("auth/activation", async (data) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:9000/api/v1/activation/" + data,
+      data,
+      {
+        withCredentials: true,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+});
+
+// logout user
 export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
   try {
     const response = await axios.post(

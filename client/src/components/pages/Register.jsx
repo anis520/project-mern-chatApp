@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useFormFields from "../../hooks/useFormFields";
 import { useDispatch, useSelector } from "react-redux";
 import { createUser } from "../../features/auth/authApiSlice";
@@ -7,13 +7,13 @@ import { getAuthData, setMessageEmpty } from "../../features/auth/authSlice";
 import { toast } from "react-toastify";
 const Register = () => {
   const dispatch = useDispatch();
-  const { error, message } = useSelector(getAuthData);
+  const navigate = useNavigate();
+  const { error, message, user } = useSelector(getAuthData);
   const { input, handleInputChange, resetForm, setInput } = useFormFields({
     name: "",
     email: "",
     password: "",
   });
-  console.log(error);
   const handleRegister = () => {
     dispatch(createUser(input));
   };
@@ -26,10 +26,11 @@ const Register = () => {
     if (message) {
       toast.success(message);
       resetForm();
+      navigate("/activation/verify");
 
       dispatch(setMessageEmpty());
     }
-  }, [error, message, dispatch, resetForm]);
+  }, [error, message, dispatch, resetForm, navigate]);
 
   return (
     <div className="h-screen w-screen bg-gradient-to-r from-teal-500 to-teal-300 flex items-center justify-center">
