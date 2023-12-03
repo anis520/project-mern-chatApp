@@ -4,10 +4,11 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Activation from "../pages/Activation";
 import { Outlet } from "react-router-dom";
+import Theme from "../../features/theme/theme";
 
 const Layout = () => {
   return (
-    <div>
+    <div className="relative ">
       <Outlet />
     </div>
   );
