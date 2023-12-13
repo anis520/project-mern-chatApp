@@ -3,9 +3,10 @@ import Activation from "../components/pages/Activation";
 import Home from "../components/pages/Home";
 import Login from "../components/pages/Login";
 import Register from "../components/pages/Register";
+import ResetPasswordConfirm from "../components/pages/ResetPasswordConfirm";
 import ResetPassword from "../components/pages/ResetPassword";
-import PublicGard from "./PublicGard";
 
+import PublicGard from "./PublicGard";
 // create public router
 const publicRouter = [
   {
@@ -23,17 +24,14 @@ const publicRouter = [
             element: <Register />,
           },
           {
+            path: "/resetpassword/:paramstoken",
+            element: <ResetPasswordConfirm />,
+          },
+          {
             path: "/resetpassword",
             element: <ResetPassword />,
           },
-          // {
-          // path: "/forgot",
-          // element: <Forgot />,
-          // },
-          {
-            path: "/activation/:paramstoken",
-            element: <Activation />,
-          },
+
           {
             path: "/activation",
             element: <Activation />,
@@ -41,6 +39,10 @@ const publicRouter = [
         ],
       },
     ],
+  },
+  {
+    path: "/activation/:paramstoken",
+    element: <Activation />,
   },
 ];
 

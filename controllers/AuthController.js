@@ -4,7 +4,11 @@ import asynchandler from "express-async-handler";
 import bcrypt from "bcrypt";
 
 import { createOTP } from "../utils/helper.js";
-import { sendEmail, sendOtp } from "../mails/sendemai.js";
+import {
+  sendEmail,
+  sendOtp,
+  sendResetPasswordEmail,
+} from "../mails/sendemai.js";
 import { dotsToHyphens, hyphensToDots } from "../helpers/createSlug.js";
 
 export const UserLogin = asynchandler(async (req, res) => {
@@ -35,7 +39,7 @@ export const UserLogin = asynchandler(async (req, res) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.APP_ENV == "Development" ? false : true,
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 60 * 24,
       path: "/",
     });
 
@@ -60,16 +64,19 @@ export const meController = asynchandler(async (req, res) => {
   if (!Token) {
     res.status(404).json({ message: "unauthoriged user" });
   } else {
-    JWT.verify(Token, process.env.ACCESS_TOKEN, async (err, decoed) => {
+    const tokencheck = JWT.verify(Token, process.env.ACCESS_TOKEN_SECRET);
+    console.log(tokencheck);
+
+    JWT.verify(Token, process.env.ACCESS_TOKEN_SECRET, async (err, decoed) => {
       if (err) {
         return res.status(400).json({ message: "invatie token" });
       }
 
-      const me = await User.findOne({ email: decoed.email })
-        .select("-password")
-        .populate("role");
+      const me = await User.findOne({ email: decoed.email }).select(
+        "-password"
+      );
 
-      res.status(200).json({ me });
+      res.status(200).json(me);
     });
   }
 });
@@ -140,6 +147,56 @@ export const UserRegister = asynchandler(async (req, res) => {
   }
 });
 
+// resend activation
+export const ResendAcivation = asynchandler(async (req, res) => {
+  try {
+    // console.log(req.body);
+    const { email } = req.body;
+
+    // email existance
+    const emailCheck = await User.findOne({ email });
+
+    if (!emailCheck) {
+      return res.status(400).json({ message: "Email not exists" });
+    }
+
+    // create otp
+    const activationCode = createOTP(5);
+
+    // create verfiytoken
+    let verifyToken = JWT.sign(
+      { email: email, otp: activationCode },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
+    );
+
+    const tohyphen = dotsToHyphens(verifyToken);
+
+    // send an email
+    await sendEmail(
+      "anisulhoque587@gmail.com",
+      "welcome message " + emailCheck.name,
+      tohyphen,
+      activationCode
+    );
+
+    //send cookie
+    res.cookie("verifyToken", verifyToken, {
+      httpOnly: false,
+      secure: true,
+      sameSite: "strict",
+      path: "/",
+      maxAge: 15 * 60 * 1000,
+    });
+
+    return res
+      .status(201)
+      .json({ message: "Activation link Resend  successful" });
+  } catch (error) {
+    return res.status(400).json({ message: "Invalid user data" });
+  }
+});
+
 // verify authtoken && otp
 export const VerfiyUser = asynchandler(async (req, res) => {
   // get data
@@ -181,88 +238,84 @@ export const VerfiyUserByOtp = asynchandler(async (req, res) => {
     // update user
     const user = await User.findOneAndUpdate(
       { email: tokencheck.email },
-      { isverfied: true, accessToken: null }
+      { isverfied: true, accessToken: null },
+      { new: true }
     );
 
     // clear cookie
     res.clearCookie("verifyToken");
 
-    return res.status(200).json({ message: "successfully verify account" });
+    return res
+      .status(200)
+      .json({ message: "successfully verify account", user });
   } else {
     return res.status(400).json({ message: "Wrong Otp" });
   }
-
-  // const tokencheck = JWT.verify(toDot, process.env.ACCESS_TOKEN_SECRET);
 });
 
-// /// reset password contorller
-// export const UserResetPassword = asynchandler(async (req, res) => {
-//   const user = await User.findOne({ email: req.body.email });
-//   // check exits email
-//   if (!user) {
-//     return res.status(500).json({ message: "User not found by this Email" });
-//   }
+// resend activation
+export const ResendPasswordLink = asynchandler(async (req, res) => {
+  try {
+    // console.log(req.body);
+    const { email } = req.body;
 
-//   // set token on db
-//   let accessToken = JWT.sign(
-//     { _id: user._id, email: user.email },
-//     process.env.ACCESS_TOKEN,
-//     {
-//       expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
-//     }
-//   );
-//   accessToken = accessToken.replace(/\./g, "");
-//   const updatebytoken = await User.findByIdAndUpdate(user._id, {
-//     token: accessToken,
-//   });
+    // email existance
+    const emailCheck = await User.findOne({ email });
 
-//   if (!updatebytoken) {
-//     return res.status(500).json({ message: "Something was wrong try again" });
-//   }
+    if (!emailCheck) {
+      return res.status(400).json({ message: "Email not exists" });
+    }
 
-//   // sendEmail(
-//   // req.body.email,
-//   // "Reset Passwrod",
-//   // resetpasswordtemplate(user.username, process.env.CLIENT_PORT, accessToken)
-//   // );
+    // create verfiytoken
+    let verifyToken = JWT.sign(
+      { email: email },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
+    );
 
-//   res.status(200).json({
-//     message:
-//       "Sended an link on your email " + req.body.email.slice(0, 6) + "***",
-//   });
-// });
+    const tohyphen = dotsToHyphens(verifyToken);
 
-// /// verfiy reset password contorller
-// export const UserResetPasswordverify = asynchandler(async (req, res) => {
-//   const user = await User.findOne({ token: req.body.token });
+    // send an email
+    await sendResetPasswordEmail(
+      email,
+      "welcome message " + emailCheck.name,
+      tohyphen,
+      "null"
+    );
 
-//   // // check exits email
-//   if (!user) {
-//     return res.status(500).json({ message: "Bad request Try agein" });
-//   }
-//   const hash = await bcrypt.hash(req.body.password, 10);
+    return res
+      .status(201)
+      .json({ message: "Activation link Resend  successful" });
+  } catch (error) {
+    return res.status(400).json({ message: "Invalid user data" });
+  }
+});
 
-//   const updatedDocument = await User.findOneAndUpdate(
-//     { token: req.body.token }, // The query to find the document
-//     { password: hash, token: "" }, // The new data to update the document with
-//     { new: true } // Set {new: true} to return the updated document instead of the original one
-//   );
+// verify authtoken && otp
+export const VerfiyUserTokenPassword = asynchandler(async (req, res) => {
+  // get data
+  const { password, confirmPassword } = req.body;
+  const { token } = req.params;
+  if (!token) {
+    return res.status(400).json({ message: "Token not found" });
+  }
+  const convate = hyphensToDots(token);
+  const tokencheck = JWT.verify(convate, process.env.ACCESS_TOKEN_SECRET);
 
-//   if (!updatedDocument) {
-//     return res.status(500).json({ message: "Something was wrong try again" });
-//   }
+  if (tokencheck) {
+    const hash = await bcrypt.hash(password, 10);
 
-//   res.status(200).json({
-//     message: "password update successfully",
-//   });
-// });
+    // update user
+    const user = await User.findOneAndUpdate(
+      { email: tokencheck.email },
+      { password: hash },
+      { new: true }
+    );
 
-// // get all users
-
-// export const Getalluser = asynchandler(async (req, res) => {
-//   const users = await User.find();
-
-//   res.status(200).json({
-//     users,
-//   });
-// });
+    return res
+      .status(200)
+      .json({ message: "successfully update password", user });
+  } else {
+    return res.status(400).json({ message: "Wrong info try agein" });
+  }
+});

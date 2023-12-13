@@ -12,17 +12,27 @@ import userAvatar from "../../../public/user-avatar.png";
 import Theme from "../../features/theme/theme";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
+import useAuthUser from "../../hooks/useAuthUser";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../../features/auth/authApiSlice";
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
   const icon = useRef(null);
+  const { user } = useAuthUser();
   const handleChange = (e) => {
     if (e.target.value > 0) {
       icon.current.style.display = "none";
     }
   };
+
+  const logoutHandler = () => {
+    dispatch(logoutUser());
+  };
+
   return (
-    <div className="fixed top-0 left-0  w-2/12 lg:w-3/12 h-screen bg-slate-200 dark:bg-slate-800 flex  border-r-2 ">
-      <div className=" w-10/12  lg:w-2/12 h-full bg-slate-700 relative">
+    <div className="fixed top-0 left-0  w-2/12 lg:w-3/12 h-screen bg-slate-200 dark:bg-slate-800 flex  border-r-2 dark:border-slate-600 ">
+      <div className=" hidden sm:block w-4/12  lg:w-2/12 h-full bg-slate-700 relative">
         <div className="bg-black h-12 flex items-center justify-center">
           <BsJustifyRight className="text-white text-3xl rounded-md cursor-pointer  " />
         </div>
@@ -33,7 +43,24 @@ const Sidebar = () => {
           <Link to={"/id=57"}>
             <BsFillChatDotsFill className="text-slate-500 text-2xl rounded-md cursor-pointer     " />
           </Link>
-          <BsPersonCircle className="text-slate-500 text-2xl rounded-md cursor-pointer     " />
+          <div onClick={logoutHandler}>
+            {
+              user.photo ? (
+                <img
+                  src={user.photo}
+                  className="w-8 h-8 rounded-full"
+                  alt="photo"
+                />
+              ) : (
+                <img
+                  src={userAvatar}
+                  className="w-8 h-8 rounded-full"
+                  alt="photo"
+                />
+              )
+              // <BsPersonCircle className="text-slate-500 text-2xl rounded-md cursor-pointer     " />
+            }{" "}
+          </div>
           <BsBookmarkHeartFill className="text-slate-500 text-2xl rounded-md cursor-pointer     " />
           <div className="mt-auto mb-16 text-slate-500 text-2xl rounded-md cursor-pointer ">
             <Theme />
@@ -42,27 +69,19 @@ const Sidebar = () => {
       </div>
       <div className="w-full  ">
         {/* search div  */}
-        <div className=" bg-slate-300 dark:bg-darkBg dark:border-b  p-2 w-full  flex justify-center relative">
-          <BsSearch
-            ref={icon}
-            className=" text-slate-400 absolute top-4 right-14   "
-          />
-
+        <div className="     bg-slate-300 dark:bg-darkBg dark:border-b  dark:border-slate-600 p-2 w-full   flex justify-center relative">
           <input
             placeholder="Search here"
             type="search"
-            className="w-full border rounded-md p-1 hidden lg:block"
+            className="w-full border rounded-md p-1  "
           />
-          <button className="text-2xl dark:text-white w-12 flex items-center justify-center">
-            <BsPencilSquare />
-          </button>
         </div>
         {/* chat list div  */}
-        <div className="h-full   space-y-3  sm:p-2 overflow-y-auto ">
-          <div className="w-fit lg:w-full  bg-white dark:bg-darkBg   p-1 lg:p-2 rounded-md shadow-sm flex items-center gap-2">
+        <div className="h-full   space-y-3 p-2 overflow-y-auto  ">
+          <div className="w-fit lg:w-full  bg-white dark:bg-darkBg mx-auto  p-2 rounded-md shadow-sm flex items-center sm:gap-2">
             <img
               src={userAvatar}
-              className="  w-8 lg:w-14 rounded-full"
+              className="  w-8 lg:w-14 rounded-full  "
               alt=""
             />
             <div className="font-semibold text-lg">

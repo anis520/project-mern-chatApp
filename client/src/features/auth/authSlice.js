@@ -6,6 +6,9 @@ import {
   getLoggedInUser,
   loginUser,
   logoutUser,
+  resendActivation,
+  resendPassword,
+  resendPasswordToken,
 } from "./authApiSlice";
 
 // create auth slice
@@ -56,6 +59,7 @@ const authSlice = createSlice({
       .addCase(activateAccountByOTP.fulfilled, (state, action) => {
         state.message = action.payload.message;
         state.loader = false;
+        state.user = action.payload.user;
       })
       // activateAccountByLINK
       .addCase(activation.pending, (state, action) => {
@@ -94,6 +98,31 @@ const authSlice = createSlice({
       })
       .addCase(getLoggedInUser.fulfilled, (state, action) => {
         state.user = action.payload;
+        localStorage.setItem("user", JSON.stringify(action.payload));
+      })
+      // resend link
+      .addCase(resendActivation.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.user = null;
+      })
+      .addCase(resendActivation.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+      })
+      // resend link
+      .addCase(resendPassword.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.user = null;
+      })
+      .addCase(resendPassword.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+      })
+      // resend token
+      .addCase(resendPasswordToken.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.user = null;
+      })
+      .addCase(resendPasswordToken.fulfilled, (state, action) => {
+        state.message = action.payload.message;
       });
   },
 });

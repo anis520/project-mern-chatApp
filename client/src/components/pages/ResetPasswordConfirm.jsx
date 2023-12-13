@@ -1,22 +1,30 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { getAuthData, setMessageEmpty } from "../../features/auth/authSlice";
 import useFormFields from "../../hooks/useFormFields";
-import { toast } from "react-toastify";
+import { resendPasswordToken } from "../../features/auth/authApiSlice";
 import { useEffect } from "react";
-import { resendPassword } from "../../features/auth/authApiSlice";
+import { toast } from "react-toastify";
 
-const ResetPassword = () => {
+const ResetPasswordConfirm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  let { paramstoken } = useParams();
+
   const { error, message, user } = useSelector(getAuthData);
   const { input, handleInputChange, resetForm, setInput } = useFormFields({
-    email: "",
+    password: "",
+    confirmPassword: "",
+    token: null,
   });
   const handleReset = () => {
-    dispatch(resendPassword(input));
+    if (input.password != input.confirmPassword) {
+      return toast.warn("confirmPassword not match");
+    }
+    input.token = paramstoken;
+    dispatch(resendPasswordToken(input));
   };
-
+  console.log(paramstoken);
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -25,6 +33,7 @@ const ResetPassword = () => {
     if (message) {
       toast.success(message);
       resetForm();
+      navigate("/login");
 
       dispatch(setMessageEmpty());
     }
@@ -36,31 +45,34 @@ const ResetPassword = () => {
        rounded-md bg-white space-y-3"
       >
         <p className="text-2xl text-teal-400 font-semibold text-center">
-          Reset password
+          Reset your password
         </p>
         <div className="w-full h-2 bg-teal-400 my-3 space-y-3 rounded-md"></div>{" "}
         <input
-          type="text"
-          name="email"
-          value={input.email}
+          name="password"
+          value={input.password}
           onChange={handleInputChange}
-          placeholder="type your email"
+          type="text"
+          placeholder="new password"
+          className="w-full p-1 border border-teal-400 rounded-md"
+        />
+        <input
+          name="confirmPassword"
+          value={input.confirmPassword}
+          onChange={handleInputChange}
+          type="text"
+          placeholder="Confirm password"
           className="w-full p-1 border border-teal-400 rounded-md"
         />
         <button
           onClick={handleReset}
           className="w-full p-2 bg-teal-400 text-white rounded-md text-lg font-semibold "
         >
-          Reset your password
-        </button>
-        <button className="w-full p-2 text-teal-400 border border-teal-400 rounded-md text-lg font-semibold ">
-          <Link className="" to={"/login"}>
-            Login
-          </Link>
+          reset
         </button>
       </div>
     </div>
   );
 };
 
-export default ResetPassword;
+export default ResetPasswordConfirm;

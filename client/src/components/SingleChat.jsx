@@ -29,7 +29,7 @@ const SingleChat = ({ side }) => {
     <div>
       <div
         className={cn(
-          "mx-4 mt-5 w-fit max-w-[400px] md:max-w-[600px]  group    px-4",
+          "mx-4 mt-5 w-fit max-w-[250px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[600px]  group    px-4",
           {
             "ms-0": side == "left",
           },
@@ -40,7 +40,7 @@ const SingleChat = ({ side }) => {
       >
         <div
           className={cn(
-            ` bg-${theme} text-white    w-fit py-1 px-2 rounded-lg relative  cursor-pointer`,
+            ` bg-${theme} text-white dark:text-zinc-700 font-semibold sm:font-normal text-sm sm:text-base    w-fit py-1 px-2 rounded-lg relative  cursor-pointer`,
             { "text-black font-semibold": theme == "gray-200" }
           )}
           onContextMenu={handleContextMenu}
@@ -59,14 +59,14 @@ const SingleChat = ({ side }) => {
           <BsThreeDotsVertical
             onClick={() => setMenu(true)}
             className={cn(
-              `duration-100 absolute ease-linear opacity-100 top-2 text-black  md:hidden  group-hover:block `,
+              `duration-100 absolute ease-linear opacity-100 top-2 text-black dark:text-white  md:hidden  group-hover:block `,
               { "right-[-25px]": side },
               { "left-[-25px]": !side }
             )}
           />
           <div
             onClick={() => setMenu(true)}
-            className="bg-slate-100 shadow-md absolute bottom-[-22px] right-0 py-1 px-2 rounded-md"
+            className="bg-slate-100 dark:bg-slate-200 shadow-md absolute bottom-[-22px] right-0 py-1 px-2 rounded-md"
           >
             <FaSmile className=" text-orange-300 h-5 w-5     " />
           </div>
@@ -101,7 +101,9 @@ const SingleChat = ({ side }) => {
             </div>
           )}
         </div>
-        <p className="text-sm font-semibold text-slate-500 px-2">12.00pm</p>{" "}
+        <p className="text-sm font-semibold text-slate-500 dark:text-slate-300 px-2">
+          12.00pm
+        </p>{" "}
       </div>
     </div>
   );

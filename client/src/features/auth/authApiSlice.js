@@ -77,8 +77,8 @@ export const activation = createAsyncThunk("auth/activation", async (data) => {
 // logout user
 export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
   try {
-    const response = await axios.post(
-      "http://localhost:5050/api/v1/auth/logout",
+    const response = await axios.get(
+      "http://localhost:9000/api/v1/logout",
       "",
       {
         withCredentials: true,
@@ -96,9 +96,64 @@ export const getLoggedInUser = createAsyncThunk(
   "auth/getLoggedInUser",
   async () => {
     try {
-      const response = await axios.get("http://localhost:5050/api/v1/auth/me", {
+      const response = await axios.get("http://localhost:9000/api/v1/me", {
         withCredentials: true,
       });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
+
+// resend Activation
+export const resendActivation = createAsyncThunk(
+  "auth/resendActivation",
+  async (data) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:9000/api/v1/resend-activation",
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
+// resend Activation
+export const resendPassword = createAsyncThunk(
+  "auth/resendPassword",
+  async (data) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:9000/api/v1/resetpassword",
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
+// resend Activation
+export const resendPasswordToken = createAsyncThunk(
+  "auth/resendPasswordToken",
+  async (data) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:9000/api/v1/resetpassword/${data.token}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
       return response.data;
     } catch (error) {
       throw new Error(error.response.data.message);

@@ -1,10 +1,16 @@
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
+import useAuthUser from "../hooks/useAuthUser";
 
 const PrivateGard = () => {
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useAuthUser();
+  console.log(user);
 
-  return user ? <Outlet /> : <Navigate to="/login" />;
+  if (user) {
+    return <Outlet />;
+  } else {
+    return <Navigate to="/login" />;
+  }
 };
 
 export default PrivateGard;
