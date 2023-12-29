@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getAuthData, setMessageEmpty } from "../../features/auth/authSlice";
 import useFormFields from "../../hooks/useFormFields";
 import { resendPasswordToken } from "../../features/auth/authApiSlice";
@@ -11,8 +11,8 @@ const ResetPasswordConfirm = () => {
   const navigate = useNavigate();
   let { paramstoken } = useParams();
 
-  const { error, message, user } = useSelector(getAuthData);
-  const { input, handleInputChange, resetForm, setInput } = useFormFields({
+  const { error, message } = useSelector(getAuthData);
+  const { input, handleInputChange, resetForm } = useFormFields({
     password: "",
     confirmPassword: "",
     token: null,

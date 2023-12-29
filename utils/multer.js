@@ -52,3 +52,4 @@ const storage = multer.diskStorage({
 export const BrandLogoUpload = multer({ storage }).single("logo");
 export const CatagoryPhotoUpload = multer({ storage }).single("catphoto");
 export const ProductPhotoUpload = multer({ storage }).single("productphoto");
+export const profilePhoto = multer({ storage }).single("profile-photo");

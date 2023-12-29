@@ -13,21 +13,17 @@ import Theme from "../../features/theme/theme";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
 import useAuthUser from "../../hooks/useAuthUser";
-import { useDispatch } from "react-redux";
-import { logoutUser } from "../../features/auth/authApiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import AvaterUI from "../AvaterUI/AvaterUI";
 
 const Sidebar = () => {
-  const dispatch = useDispatch();
+  const { users } = useSelector((state) => state.user);
   const icon = useRef(null);
   const { user } = useAuthUser();
   const handleChange = (e) => {
     if (e.target.value > 0) {
       icon.current.style.display = "none";
     }
-  };
-
-  const logoutHandler = () => {
-    dispatch(logoutUser());
   };
 
   return (
@@ -43,24 +39,11 @@ const Sidebar = () => {
           <Link to={"/id=57"}>
             <BsFillChatDotsFill className="text-slate-500 text-2xl rounded-md cursor-pointer     " />
           </Link>
-          <div onClick={logoutHandler}>
-            {
-              user.photo ? (
-                <img
-                  src={user.photo}
-                  className="w-8 h-8 rounded-full"
-                  alt="photo"
-                />
-              ) : (
-                <img
-                  src={userAvatar}
-                  className="w-8 h-8 rounded-full"
-                  alt="photo"
-                />
-              )
-              // <BsPersonCircle className="text-slate-500 text-2xl rounded-md cursor-pointer     " />
-            }{" "}
-          </div>
+          <Link to="/profile">
+            <div className="w-8   h-8   text-lg">
+              <AvaterUI photo={user.photo} name={user.name} />
+            </div>
+          </Link>
           <BsBookmarkHeartFill className="text-slate-500 text-2xl rounded-md cursor-pointer     " />
           <div className="mt-auto mb-16 text-slate-500 text-2xl rounded-md cursor-pointer ">
             <Theme />
@@ -78,21 +61,33 @@ const Sidebar = () => {
         </div>
         {/* chat list div  */}
         <div className="h-full   space-y-3 p-2 overflow-y-auto  ">
-          <div className="w-fit lg:w-full  bg-white dark:bg-darkBg mx-auto  p-2 rounded-md shadow-sm flex items-center sm:gap-2">
-            <img
-              src={userAvatar}
-              className="  w-8 lg:w-14 rounded-full  "
-              alt=""
-            />
-            <div className="font-semibold text-lg">
-              <div className="hidden lg:block">
-                <p className="text-slate-600 dark:text-white">Raza miya</p>
-                <p className="text-slate-400 text-sm">
-                  last seen 1 minites ago
-                </p>
+          {users?.map((item, index) => {
+            return (
+              <div
+                key={index}
+                className="w-fit lg:w-full  bg-white dark:bg-darkBg mx-auto  p-2 rounded-md shadow-sm flex items-center sm:gap-2"
+              >
+                {/* <img
+                  src={userAvatar}
+                  className="  w-8 lg:w-14 rounded-full  "
+                  alt=""
+                /> */}
+                <div className="w-8 lg:w-14 h-8 lg:h-14 text-2xl">
+                  <AvaterUI photo={item.photo} name={item.name} />
+                </div>
+                <div className="font-semibold text-lg">
+                  <div className="hidden lg:block">
+                    <p className="text-slate-600 dark:text-white">
+                      {item.name}
+                    </p>
+                    <p className="text-slate-400 text-sm">
+                      last seen 1 minites ago
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -9,7 +9,11 @@ import {
   ResendAcivation,
   ResendPasswordLink,
   VerfiyUserTokenPassword,
+  getAllUsers,
+  profilePhotoController,
 } from "../controllers/AuthController.js";
+import AuthCheckmiddlewrer from "../middlewares/checkAuth.js";
+import { profilePhoto } from "../utils/multer.js";
 
 const router = Router();
 
@@ -22,7 +26,8 @@ router.post("/activation/:token", VerfiyUser);
 router.post("/activation-by-otp/:token", VerfiyUserByOtp);
 router.post("/resend-activation", ResendAcivation);
 router.get("/logout", UserLogout);
+// router.use(AuthCheckmiddlewrer);
 router.get("/me", meController);
-// router.get("/user/all", Getalluser);
-
+router.post("/profile-photo/:id", profilePhoto, profilePhotoController);
+router.get("/user/all", getAllUsers);
 export default router;

@@ -5,19 +5,24 @@ import {
   BsFillTelephoneFill,
   BsReception0,
 } from "react-icons/bs";
+import { MdOutlinePhotoCameraBack } from "react-icons/md";
 
+import EmojiPicker from "emoji-picker-react";
 import userAvatar from "../../../public/user.avif";
 import cn from "../../utils/cn";
 import { RiPushpinFill } from "react-icons/ri";
 
 import { useSelector } from "react-redux";
 import { useOnclickOutside } from "../../hooks/useOnclickOutside";
+import { useOnclickOutside as emojiDiv } from "../../hooks/useOnclickOutside";
 import SingleChat from "../SingleChat";
 import ChatBody from "./chatBody/ChatBody";
 
 const ChatArea = () => {
   const [menu, setMenu] = useState(false);
+  const [emoji, setEmoji] = useState(false);
   const menuRef = useRef(null);
+  const emojiRef = useRef(null);
   const { theme } = useSelector((state) => state.theme);
   const [info, setInfo] = useState(false);
   const handleContextMenu = (event) => {
@@ -26,6 +31,7 @@ const ChatArea = () => {
   };
 
   useOnclickOutside(menuRef, () => setMenu(false));
+  emojiDiv(emojiRef, () => setEmoji(false));
 
   return (
     <div className="fixed  top-0 right-0 w-10/12 lg:w-9/12 h-screen flex   ">
@@ -63,11 +69,25 @@ const ChatArea = () => {
         <ChatBody />
         {/* chat body  footer  */}
         <div className="h-16 p-4 w-full bg-white dark:bg-darkBg  border-t dark:border-slate-600 absolute bottom-0 left-0 flex items-center gap-2 z-30">
+          <button className="text-[25px]">👍</button>
+          <button className="text-[25px] dark:text-white mt-1">
+            <MdOutlinePhotoCameraBack />
+          </button>
           <input
             type="text"
             className="bg-slate-100 border w-full py-1 px-2 rounded-md"
             placeholder="type your message"
-          />
+          />{" "}
+          <div ref={emojiRef} className="fixed bottom-[70px] right-[40px]">
+            {" "}
+            {emoji && <EmojiPicker />}
+            <button
+              className="fixed bottom-[15px] right-[87px] text-[22px]"
+              onClick={() => setEmoji(!emoji)}
+            >
+              😊
+            </button>{" "}
+          </div>
           <button
             className={`bg-${theme} text-white py-1 px-3 font-semibold rounded-md  text-center`}
           >

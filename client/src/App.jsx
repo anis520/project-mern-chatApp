@@ -9,12 +9,15 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { getLoggedInUser } from "./features/auth/authApiSlice";
 import useAuthUser from "./hooks/useAuthUser";
+import { getAllUsers } from "./features/user/userApiSlice";
 
 function App() {
   const dispatch = useDispatch();
   const { mode } = useSelector((state) => state.theme);
-  const { user } = useAuthUser();
 
+  useEffect(() => {
+    dispatch(getAllUsers());
+  }, []);
   useEffect(() => {
     if (localStorage.getItem("user")) {
       dispatch(getLoggedInUser());

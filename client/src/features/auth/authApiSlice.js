@@ -160,3 +160,21 @@ export const resendPasswordToken = createAsyncThunk(
     }
   }
 );
+// upload photo
+export const uploadPhoto = createAsyncThunk(
+  "auth/uploadPhoto",
+  async (data) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:9000/api/v1/profile-photo/${data.id}`,
+        data.data,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);

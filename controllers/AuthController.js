@@ -10,6 +10,7 @@ import {
   sendResetPasswordEmail,
 } from "../mails/sendemai.js";
 import { dotsToHyphens, hyphensToDots } from "../helpers/createSlug.js";
+import { uploadcloud } from "../utils/cloudnary.js";
 
 export const UserLogin = asynchandler(async (req, res) => {
   const { email, password } = req.body;
@@ -318,4 +319,26 @@ export const VerfiyUserTokenPassword = asynchandler(async (req, res) => {
   } else {
     return res.status(400).json({ message: "Wrong info try agein" });
   }
+});
+
+// get all users
+export const getAllUsers = asynchandler(async (req, res) => {
+  // all user
+  const users = await User.find().select("-password");
+
+  return res.status(200).json({ users });
+});
+// upload profile photo
+export const profilePhotoController = asynchandler(async (req, res) => {
+  const { id } = req.params;
+
+  const data = await uploadcloud(req.file.path);
+  console.log(data);
+  console.log(id);
+  const user = await User.findByIdAndUpdate(
+    id,
+    { photo: data.secure_url },
+    { new: true }
+  );
+  return res.status(200).json({ message: "photo update successfull", user });
 });

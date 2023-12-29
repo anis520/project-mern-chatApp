@@ -9,6 +9,7 @@ import {
   resendActivation,
   resendPassword,
   resendPasswordToken,
+  uploadPhoto,
 } from "./authApiSlice";
 
 // create auth slice
@@ -123,6 +124,20 @@ const authSlice = createSlice({
       })
       .addCase(resendPasswordToken.fulfilled, (state, action) => {
         state.message = action.payload.message;
+      })
+      // upload photo
+      .addCase(uploadPhoto.pending, (state, action) => {
+        state.loader = true;
+      })
+      .addCase(uploadPhoto.rejected, (state, action) => {
+        state.loader = false;
+        state.error = action.error.message;
+      })
+      .addCase(uploadPhoto.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+        state.user = action.payload.user;
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        state.loader = false;
       });
   },
 });

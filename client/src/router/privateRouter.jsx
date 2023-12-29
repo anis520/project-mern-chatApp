@@ -1,3 +1,4 @@
+import Profile from "../components/Profile/Profile";
 import ChatArea from "../components/chat/ChatArea";
 import Welcome from "../components/chat/Welcome";
 import Home from "../components/pages/Home";
@@ -15,6 +16,7 @@ const privateRouter = [
           { path: "/:id", element: <ChatArea /> },
         ],
       },
+      { path: "/profile", element: <Profile /> },
     ],
   },
 ];

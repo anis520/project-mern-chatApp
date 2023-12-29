@@ -10,12 +10,17 @@ const ChatBody = () => {
   return (
     <div
       ref={div}
-      className="w-full h-full bg-white dark:bg-darkBg  px-5 pt-16 pb-20 overflow-y-auto"
+      className="w-full h-full bg-white dark:bg-darkBg  px-5 pt-16 pb-24 overflow-y-auto"
     >
       <SingleChat side={"left"} />
       <SingleChat />
       <SingleChat side={"left"} />
       <SingleChat />
+      <img
+        src={"../../../../public/images.jpg"}
+        className="w-5/12 mt-4 rounded-2xl dark:border border-gray-500 "
+        alt=""
+      />
       <SingleChat />
       <SingleChat />
     </div>
