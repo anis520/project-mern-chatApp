@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AvaterUI from "../AvaterUI/AvaterUI";
 import { Link } from "react-router-dom";
 import { logoutUser, uploadPhoto } from "../../features/auth/authApiSlice";
+import cn from "../../utils/cn";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -33,7 +34,7 @@ const Profile = () => {
     >
       <div className="w-11/12 md:w-6/12  p-5 bg-white rounded-lg space-y-3 ">
         <div
-          className={`w-44 h-44 rounded-full object-cover text-6xl 
+          className={`relative w-44 h-44 rounded-full object-cover text-6xl 
           }`}
         >
           <label htmlFor="photo">
@@ -44,17 +45,23 @@ const Profile = () => {
               id="photo"
               className="hidden"
             />
-            <AvaterUI name={user.name} photo={user.photo} />
+            <AvaterUI
+              name={user.name}
+              photo={file ? URL.createObjectURL(file) : user.photo}
+            />
           </label>
+          {file && (
+            <button
+              onClick={handleSubmit}
+              className={cn(
+                "rounded-b-full    text-2xl p-2 absolute bottom-2   right-4  bg-blue-400 text-white px-1   w-10/12   "
+              )}
+            >
+              update
+            </button>
+          )}
         </div>
-        {file && (
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-400 text-white px-1 rounded-md "
-          >
-            update
-          </button>
-        )}
+
         <p>{user.name}</p>
 
         <Link to="/">Home</Link>

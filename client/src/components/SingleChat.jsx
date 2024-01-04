@@ -14,7 +14,7 @@ import { BsBookmarkHeartFill, BsThreeDotsVertical } from "react-icons/bs";
 import { CiFaceSmile, CiHeart } from "react-icons/ci";
 import { ImSad } from "react-icons/im";
 
-const SingleChat = ({ side }) => {
+const SingleChat = ({ side, data }) => {
   const [menu, setMenu] = useState(false);
   const menuRef = useRef(null);
   const { theme } = useSelector((state) => state.theme);
@@ -24,6 +24,7 @@ const SingleChat = ({ side }) => {
   };
 
   useOnclickOutside(menuRef, () => setMenu(false));
+  console.log(side);
 
   return (
     <div>
@@ -31,10 +32,10 @@ const SingleChat = ({ side }) => {
         className={cn(
           "mx-4 mt-5 w-fit max-w-[250px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[600px]  group    px-4",
           {
-            "ms-0": side == "left",
+            "ms-0": side == "right",
           },
           {
-            "ms-auto": !side,
+            "ms-auto": side == "left",
           }
         )}
       >
@@ -45,9 +46,7 @@ const SingleChat = ({ side }) => {
           )}
           onContextMenu={handleContextMenu}
         >
-          hello anis vai Lorem ipsum dolor sit amet consectetur adipisicing
-          elit. Dicta, beatae! Lorem ipsum dolor sit amet consectetur,
-          adipisicing elit. Sint, architecto.
+          {data ? data : "---- no text ----"}
           <RiPushpinFill
             className={cn(
               `duration-100 absolute ease-linear opacity-100 top-[-8px] right-[-11px] text-red-500`,

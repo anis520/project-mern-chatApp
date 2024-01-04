@@ -13,7 +13,7 @@ const privateRouter = [
         element: <Home />,
         children: [
           { path: "/", element: <Welcome /> },
-          { path: "/:id", element: <ChatArea /> },
+          { path: "/messages/t/:id", element: <ChatArea /> },
         ],
       },
       { path: "/profile", element: <Profile /> },

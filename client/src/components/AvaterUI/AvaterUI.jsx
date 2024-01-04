@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import loaderImage from "../../../public/upload.gif";
 import { useSelector } from "react-redux";
-const AvaterUI = ({ photo, name }) => {
+const AvaterUI = ({ photo, name = "User me" }) => {
   const [ui, setUi] = useState(null);
   const { loader } = useSelector((state) => state.auth);
 

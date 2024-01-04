@@ -66,7 +66,6 @@ export const meController = asynchandler(async (req, res) => {
     res.status(404).json({ message: "unauthoriged user" });
   } else {
     const tokencheck = JWT.verify(Token, process.env.ACCESS_TOKEN_SECRET);
-    console.log(tokencheck);
 
     JWT.verify(Token, process.env.ACCESS_TOKEN_SECRET, async (err, decoed) => {
       if (err) {
@@ -325,6 +324,9 @@ export const VerfiyUserTokenPassword = asynchandler(async (req, res) => {
 export const getAllUsers = asynchandler(async (req, res) => {
   // all user
   const users = await User.find().select("-password");
+  // const users = await User.find({
+  //   $and: [{ isverfied: true }, { _id: { $ne: req.me._id } }],
+  // }).select("-password");
 
   return res.status(200).json({ users });
 });

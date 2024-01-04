@@ -12,7 +12,7 @@ const AuthCheckmiddlewrer = async (req, res, next) => {
 
   const token = authHeader;
 
-  JWT.verify(token, process.env.ACCESS_TOKEN, (err, decoed) => {
+  JWT.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoed) => {
     if (err) {
       return res.status(400).json({ message: "invatie token   " });
     }

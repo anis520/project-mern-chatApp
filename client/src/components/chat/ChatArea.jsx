@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   BsCameraVideoFill,
   BsDot,
@@ -12,18 +12,26 @@ import userAvatar from "../../../public/user.avif";
 import cn from "../../utils/cn";
 import { RiPushpinFill } from "react-icons/ri";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useOnclickOutside } from "../../hooks/useOnclickOutside";
 import { useOnclickOutside as emojiDiv } from "../../hooks/useOnclickOutside";
 import SingleChat from "../SingleChat";
 import ChatBody from "./chatBody/ChatBody";
+import { useParams } from "react-router-dom";
+import AvaterUI from "../AvaterUI/AvaterUI";
+import { createChat, getChatByUser } from "../../features/chat/chatApiSlice";
 
 const ChatArea = () => {
+  const params = useParams();
+  const [activeUser, setActiveUser] = useState(null);
+  const [message, setMessage] = useState("");
+  const dispatch = useDispatch();
   const [menu, setMenu] = useState(false);
   const [emoji, setEmoji] = useState(false);
   const menuRef = useRef(null);
   const emojiRef = useRef(null);
   const { theme } = useSelector((state) => state.theme);
+  const { users } = useSelector((state) => state.user);
   const [info, setInfo] = useState(false);
   const handleContextMenu = (event) => {
     event.preventDefault();
@@ -33,6 +41,18 @@ const ChatArea = () => {
   useOnclickOutside(menuRef, () => setMenu(false));
   emojiDiv(emojiRef, () => setEmoji(false));
 
+  useEffect(() => {
+    const findData = users?.find((item) => item._id == params.id);
+
+    setActiveUser(findData);
+    dispatch(getChatByUser(activeUser?._id));
+  }, [params, activeUser, users]);
+  const handleSendMessage = (e) => {
+    if (e.key == "Enter") {
+      dispatch(createChat({ message, receiverId: activeUser._id }));
+      setMessage("");
+    }
+  };
   return (
     <div className="fixed  top-0 right-0 w-10/12 lg:w-9/12 h-screen flex   ">
       <div
@@ -51,7 +71,7 @@ const ChatArea = () => {
         <div className="h-16   w-full bg-white dark:bg-darkBg dark:border-b dark:border-slate-600  shadow-sm absolute top-0 left-0 px-4 flex items-center z-30">
           <div className="cursor-pointer" onClick={() => setInfo(!info)}>
             <p className="text-zinc-900 dark:text-white sm:text-xl font-semibold">
-              Raza miya
+              {activeUser?.name}
             </p>
             <div className="text-xs  sm:text-sm font-semibold text-zinc-500 dark:text-zinc-400 flex items-center">
               {" "}
@@ -66,7 +86,7 @@ const ChatArea = () => {
         </div>
 
         {/* chat body  */}
-        <ChatBody />
+        <ChatBody activeUser={activeUser} />
         {/* chat body  footer  */}
         <div className="h-16 p-4 w-full bg-white dark:bg-darkBg  border-t dark:border-slate-600 absolute bottom-0 left-0 flex items-center gap-2 z-30">
           <button className="text-[25px]">👍</button>
@@ -75,8 +95,11 @@ const ChatArea = () => {
           </button>
           <input
             type="text"
-            className="bg-slate-100 border w-full py-1 px-2 rounded-md"
+            className="bg-slate-100 border w-full py-1 px-2 rounded-md outline-none"
             placeholder="type your message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleSendMessage}
           />{" "}
           <div ref={emojiRef} className="fixed bottom-[70px] right-[40px]">
             {" "}
@@ -118,15 +141,15 @@ const ChatArea = () => {
         <div className="bg-white dark:bg-darkBg dark:text-white p-3 font-semibold border dark:border-slate-600">
           <p>Information</p>
         </div>
-        <img
-          src={userAvatar}
-          alt="user-photo"
-          className="w-24 h-24  mx-auto my-4                                                                                                                         "
-        />
+
+        <div className="w-24 h-24  mx-auto my-4                                                                                                                         ">
+          <AvaterUI name={activeUser?.name} photo={activeUser?.photo} />
+        </div>
+
         <div className="bg-white dark:bg-slate-400   m-4 p-4 text-center font-semibold text-xl rounded-md">
-          <p className="dark:text-white">Raza miya</p>
+          <p className="dark:text-white">{activeUser?.name}</p>
           <p className="py-2 text-base text-slate-500 dark:text-slate-200">
-            0185256455
+            {activeUser?.email}
           </p>
         </div>
       </div>

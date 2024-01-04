@@ -4,7 +4,6 @@ import useAuthUser from "../hooks/useAuthUser";
 
 const PrivateGard = () => {
   const { user } = useAuthUser();
-  console.log(user);
 
   if (user) {
     return <Outlet />;

@@ -1,27 +1,24 @@
 import mongoose from "mongoose";
 
 //schema
-const brandSchema = mongoose.Schema(
+const chatSchema = mongoose.Schema(
   {
-    name: {
+    senderId: {
       type: String,
       required: true,
-      trim: true,
-      unique: true,
     },
-    slug: {
+    receiverId: {
       type: String,
       required: true,
-      trim: true,
-      unique: true,
     },
-    logo: {
+    message: {
       type: String,
       trim: true,
     },
     status: {
-      type: Boolean,
-      default: false,
+      type: String,
+      enum: ["seen", "sent"],
+      default: "sent",
     },
     trash: {
       type: String,
@@ -35,4 +32,4 @@ const brandSchema = mongoose.Schema(
 
 ///exprot model
 
-export default mongoose.model("Brand", brandSchema);
+export default mongoose.model("Chat", chatSchema);

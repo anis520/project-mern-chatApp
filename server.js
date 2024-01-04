@@ -2,6 +2,7 @@ import express from "express";
 import colors from "colors";
 import dotenv from "dotenv";
 import AuthRoutes from "./routes/AuthRoutes.js";
+import ChatRoutes from "./routes/ChatRoutes.js";
 import cookieParser from "cookie-parser";
 import mongoDBConnect from "./config/database.js";
 import cors from "cors";
@@ -47,6 +48,7 @@ app.use(express.static("api/pubic"));
 // console.log(path.join(__dirname,'api/pubic'))
 app.use(cookieParser());
 app.use("/api/v1", AuthRoutes);
+app.use("/api/v1", ChatRoutes);
 
 app.use(handleError);
 app.listen(PORT, () => {

@@ -11,13 +11,15 @@ import {
 import userAvatar from "../../../public/user-avatar.png";
 import Theme from "../../features/theme/theme";
 import { Link } from "react-router-dom";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAuthUser from "../../hooks/useAuthUser";
 import { useDispatch, useSelector } from "react-redux";
 import AvaterUI from "../AvaterUI/AvaterUI";
 
 const Sidebar = () => {
   const { users } = useSelector((state) => state.user);
+  const [filterUser, setFilterUser] = useState(null);
+
   const icon = useRef(null);
   const { user } = useAuthUser();
   const handleChange = (e) => {
@@ -25,6 +27,12 @@ const Sidebar = () => {
       icon.current.style.display = "none";
     }
   };
+
+  useEffect(() => {
+    const data = users?.filter((item) => item._id != user._id);
+
+    setFilterUser(data);
+  }, [users, user._id]);
 
   return (
     <div className="fixed top-0 left-0  w-2/12 lg:w-3/12 h-screen bg-slate-200 dark:bg-slate-800 flex  border-r-2 dark:border-slate-600 ">
@@ -36,7 +44,7 @@ const Sidebar = () => {
           <Link to={"/"}>
             <BsFillHouseFill className="text-slate-50 text-2xl rounded-md cursor-pointer     " />
           </Link>
-          <Link to={"/id=57"}>
+          <Link to={"/"}>
             <BsFillChatDotsFill className="text-slate-500 text-2xl rounded-md cursor-pointer     " />
           </Link>
           <Link to="/profile">
@@ -61,31 +69,36 @@ const Sidebar = () => {
         </div>
         {/* chat list div  */}
         <div className="h-full   space-y-3 p-2 overflow-y-auto  ">
-          {users?.map((item, index) => {
+          {filterUser?.map((item, index) => {
             return (
-              <div
+              <Link
                 key={index}
-                className="w-fit lg:w-full  bg-white dark:bg-darkBg mx-auto  p-2 rounded-md shadow-sm flex items-center sm:gap-2"
+                className="block"
+                to={`/messages/t/${item._id}`}
               >
-                {/* <img
+                <div
+                  className={`  hover:bg-slate-50  cursor-pointer w-fit lg:w-full  bg-white dark:bg-darkBg mx-auto  p-2 rounded-md shadow-sm flex items-center sm:gap-2`}
+                >
+                  {/* <img
                   src={userAvatar}
                   className="  w-8 lg:w-14 rounded-full  "
                   alt=""
                 /> */}
-                <div className="w-8 lg:w-14 h-8 lg:h-14 text-2xl">
-                  <AvaterUI photo={item.photo} name={item.name} />
-                </div>
-                <div className="font-semibold text-lg">
-                  <div className="hidden lg:block">
-                    <p className="text-slate-600 dark:text-white">
-                      {item.name}
-                    </p>
-                    <p className="text-slate-400 text-sm">
-                      last seen 1 minites ago
-                    </p>
+                  <div className="w-8 lg:w-14 h-8 lg:h-14 text-2xl">
+                    <AvaterUI photo={item.photo} name={item.name} />
+                  </div>
+                  <div className="font-semibold text-lg">
+                    <div className="hidden lg:block">
+                      <p className="text-slate-600 dark:text-white">
+                        {item.name}
+                      </p>
+                      <p className="text-slate-400 text-sm">
+                        last seen 1 minites ago
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

@@ -26,7 +26,7 @@ router.post("/activation/:token", VerfiyUser);
 router.post("/activation-by-otp/:token", VerfiyUserByOtp);
 router.post("/resend-activation", ResendAcivation);
 router.get("/logout", UserLogout);
-// router.use(AuthCheckmiddlewrer);
+router.use(AuthCheckmiddlewrer);
 router.get("/me", meController);
 router.post("/profile-photo/:id", profilePhoto, profilePhotoController);
 router.get("/user/all", getAllUsers);
