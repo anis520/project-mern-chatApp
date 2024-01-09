@@ -7,25 +7,12 @@ import cookieParser from "cookie-parser";
 import mongoDBConnect from "./config/database.js";
 import cors from "cors";
 import { handleError } from "./utils/handleError.js";
-import { v2 as cloudinary } from "cloudinary";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url + "/api/pubic"));
 
-cloudinary.config({
-  cloud_name: "dgbhheqgy",
-  api_key: "146156465818285",
-  api_secret: "vfQ0XsOQcVAVP0pSgwAHOWgeU_E",
-});
-
-dotenv.config();
-
 const app = express();
-
-// socket connection
-
-//
 
 // set middlewares
 app.use(express.json());

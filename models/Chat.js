@@ -15,6 +15,7 @@ const chatSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    photo: { type: String, trim: true },
     status: {
       type: String,
       enum: ["seen", "sent"],

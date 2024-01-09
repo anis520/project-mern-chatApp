@@ -26,7 +26,21 @@ const ChatBody = ({ activeUser }) => {
 
       {chats?.map((item, idex) => {
         return item.senderId == user?._id ? (
-          <SingleChat side={"left"} key={idex} data={item.message} />
+          item.photo ? (
+            <img
+              src={item.photo}
+              alt=""
+              className="w-[350px] h-[350px] object-cover rounded-lg border border-gray-200 p-2 ms-auto"
+            />
+          ) : (
+            <SingleChat side={"left"} key={idex} data={item.message} />
+          )
+        ) : item.photo ? (
+          <img
+            src={item.photo}
+            className="w-[350px] h-[350px] object-cover rounded-lg border border-gray-200 p-2  "
+            alt=""
+          />
         ) : (
           <SingleChat side={"right"} key={idex} data={item.message} />
         );

@@ -1,16 +1,31 @@
 import expressAsyncHandler from "express-async-handler";
 import Chat from "../models/Chat.js";
+import { uploadcloud } from "../utils/cloudnary.js";
 
 export const ChatCreate = expressAsyncHandler(async (req, res) => {
   try {
     const { receiverId, message } = req.body;
     const senderId = req.me._id;
-    const data = await Chat.create({
-      senderId: senderId,
-      receiverId,
-      message,
-    });
-    res.status(200).json({ data });
+    let data;
+
+    if (req.file) {
+      const upload = await uploadcloud(req.file);
+      data = await Chat.create({
+        senderId: senderId,
+
+        receiverId,
+        photo: upload.secure_url,
+        message,
+      });
+    } else {
+      data = await Chat.create({
+        senderId: senderId,
+        receiverId,
+        message,
+      });
+
+      res.status(200).json({ data });
+    }
   } catch (error) {
     res.status(404).json({ message: error.message });
   }

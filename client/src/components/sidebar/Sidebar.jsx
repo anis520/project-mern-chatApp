@@ -16,7 +16,7 @@ import useAuthUser from "../../hooks/useAuthUser";
 import { useDispatch, useSelector } from "react-redux";
 import AvaterUI from "../AvaterUI/AvaterUI";
 
-const Sidebar = () => {
+const Sidebar = ({ onlineUser }) => {
   const { users } = useSelector((state) => state.user);
   const [filterUser, setFilterUser] = useState(null);
 
@@ -77,8 +77,11 @@ const Sidebar = () => {
                 to={`/messages/t/${item._id}`}
               >
                 <div
-                  className={`  hover:bg-slate-50  cursor-pointer w-fit lg:w-full  bg-white dark:bg-darkBg mx-auto  p-2 rounded-md shadow-sm flex items-center sm:gap-2`}
+                  className={` relative hover:bg-slate-50  cursor-pointer w-fit lg:w-full  bg-white dark:bg-darkBg mx-auto  p-2 rounded-md shadow-sm flex items-center sm:gap-2`}
                 >
+                  {onlineUser?.some((d) => d._id == item._id) && (
+                    <p className="h-[8px] w-[8px] rounded-full bg-green-500 absolute bottom-1 left-1"></p>
+                  )}
                   {/* <img
                   src={userAvatar}
                   className="  w-8 lg:w-14 rounded-full  "

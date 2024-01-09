@@ -1,20 +1,3 @@
-// const io =require("socket.io")(
-//     8000, {
-//   cors: {
-//     origin: "*",
-
-//     methods: ["GET", "POST"],
-//   },
-// });
-
-// io.on("connection", (socket) => {
-//   console.log("socket connsction sucessful");
-//   socket.on("addUser", (data) => {
-//     console.log(data);
-//   });
-// }
-// )
-
 import colors from "colors";
 
 import { Server } from "socket.io";
@@ -22,7 +5,6 @@ import { Server } from "socket.io";
 const io = new Server(8000, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"],
   },
 });
 

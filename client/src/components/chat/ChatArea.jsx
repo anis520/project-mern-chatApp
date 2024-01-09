@@ -23,7 +23,9 @@ import { createChat, getChatByUser } from "../../features/chat/chatApiSlice";
 
 const ChatArea = () => {
   const params = useParams();
+
   const [activeUser, setActiveUser] = useState(null);
+  const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const dispatch = useDispatch();
   const [menu, setMenu] = useState(false);
@@ -49,7 +51,16 @@ const ChatArea = () => {
   }, [params, activeUser, users]);
   const handleSendMessage = (e) => {
     if (e.key == "Enter") {
-      dispatch(createChat({ message, receiverId: activeUser._id }));
+      if (file) {
+        const data = new FormData();
+        data.append("message", message);
+        data.append("receiverId", activeUser._id);
+        data.append("chat-photo", file);
+
+        dispatch(createChat(data));
+      } else {
+        dispatch(createChat({ message, receiverId: activeUser._id }));
+      }
       setMessage("");
     }
   };
@@ -91,7 +102,17 @@ const ChatArea = () => {
         <div className="h-16 p-4 w-full bg-white dark:bg-darkBg  border-t dark:border-slate-600 absolute bottom-0 left-0 flex items-center gap-2 z-30">
           <button className="text-[25px]">👍</button>
           <button className="text-[25px] dark:text-white mt-1">
-            <MdOutlinePhotoCameraBack />
+            <label htmlFor="photo">
+              <input
+                type="file"
+                name=""
+                id="photo"
+                className="hidden"
+                onChange={(e) => setFile(e.target.files[0])}
+              />
+
+              <MdOutlinePhotoCameraBack />
+            </label>
           </button>
           <input
             type="text"
