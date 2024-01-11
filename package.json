@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "server": "nodemon server.js",
+    "socketServer": "nodemon io.js",
     "client": "npm run dev --prefix client",
-    "start": "concurrently \"npm run server\" \"npm run client\"",
-    "io": "nodemon io.js"
+    "start": "concurrently \"npm run server\" \"npm run client\" \"npm run socketServer\""
   },
   "keywords": [],
   "author": "",

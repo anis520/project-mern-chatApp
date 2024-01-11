@@ -26,15 +26,13 @@ io.on("connection", (socket) => {
   console.log("socket connection successful".bgCyan);
   socket.on("addUser", (data) => {
     adduserdata(data, socket.id);
-    console.log(users);
     io.emit("userarray", users);
   });
 
   socket.on("disconnect", (data) => {
     console.log("user disconnected" + data.bgRed);
     removeuserdata(socket.id);
-    console.log(socket.id);
-    console.log(users);
+
     io.emit("userarray", users);
   });
 });

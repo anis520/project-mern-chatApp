@@ -10,23 +10,20 @@ import {
 
 import userAvatar from "../../../public/user-avatar.png";
 import Theme from "../../features/theme/theme";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import useAuthUser from "../../hooks/useAuthUser";
 import { useDispatch, useSelector } from "react-redux";
 import AvaterUI from "../AvaterUI/AvaterUI";
+import { getAllUsers } from "../../features/user/userApiSlice";
+import cn from "../../utils/cn";
 
 const Sidebar = ({ onlineUser }) => {
   const { users } = useSelector((state) => state.user);
   const [filterUser, setFilterUser] = useState(null);
+  const { id } = useParams();
 
-  const icon = useRef(null);
   const { user } = useAuthUser();
-  const handleChange = (e) => {
-    if (e.target.value > 0) {
-      icon.current.style.display = "none";
-    }
-  };
 
   useEffect(() => {
     const data = users?.filter((item) => item._id != user._id);
@@ -42,11 +39,14 @@ const Sidebar = ({ onlineUser }) => {
         </div>
         <div className="h-full  flex flex-col items-center py-8 gap-8 ">
           <Link to={"/"}>
-            <BsFillHouseFill className="text-slate-50 text-2xl rounded-md cursor-pointer     " />
+            <BsFillChatDotsFill className="text-slate-50 text-2xl rounded-md cursor-pointer     " />
           </Link>
-          <Link to={"/"}>
-            <BsFillChatDotsFill className="text-slate-500 text-2xl rounded-md cursor-pointer     " />
-          </Link>
+
+          {/* <BsFillChatDotsFill
+            onClick={getAllUserHandler}
+            className="text-slate-500 text-2xl rounded-md cursor-pointer     "
+          /> */}
+
           <Link to="/profile">
             <div className="w-8   h-8   text-lg">
               <AvaterUI photo={user.photo} name={user.name} />
@@ -77,7 +77,13 @@ const Sidebar = ({ onlineUser }) => {
                 to={`/messages/t/${item._id}`}
               >
                 <div
-                  className={` relative hover:bg-slate-50  cursor-pointer w-fit lg:w-full  bg-white dark:bg-darkBg mx-auto  p-2 rounded-md shadow-sm flex items-center sm:gap-2`}
+                  className={cn(
+                    ` relative hover:bg-slate-100   cursor-pointer w-fit lg:w-full  bg-white dark:bg-darkBg mx-auto  p-2 rounded-md shadow-sm flex items-center sm:gap-2`,
+                    {
+                      " border-b-2 border-gray-500 dark:border-gray-300":
+                        id == item._id,
+                    }
+                  )}
                 >
                   {onlineUser?.some((d) => d._id == item._id) && (
                     <p className="h-[8px] w-[8px] rounded-full bg-green-500 absolute bottom-1 left-1"></p>

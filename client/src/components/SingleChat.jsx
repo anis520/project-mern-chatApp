@@ -41,26 +41,48 @@ const SingleChat = ({ side, data }) => {
       >
         <div
           className={cn(
-            ` bg-${theme} text-white dark:text-zinc-700 font-semibold sm:font-normal text-sm sm:text-base    w-fit py-1 px-2 rounded-lg relative  cursor-pointer`,
+            `   text-white dark:text-zinc-700 font-semibold sm:font-normal text-sm sm:text-base    w-fit py-1 px-2 rounded-lg relative  cursor-pointer`,
             { "text-black font-semibold": theme == "gray-200" }
           )}
           onContextMenu={handleContextMenu}
         >
-          {data ? data : "---- no text ----"}
-          <RiPushpinFill
+          {data.message && (
+            <p
+              className={cn(
+                ` bg-${theme}  w-fit  text-white dark:text-zinc-700 font-semibold sm:font-normal text-sm sm:text-base      text-center  py-1 px-2 rounded-lg     `,
+                { "text-black font-semibold": theme == "gray-200" },
+                {
+                  "ms-0": side == "right",
+                },
+                {
+                  "ms-auto": side == "left",
+                }
+              )}
+            >
+              {data.message}
+            </p>
+          )}
+          {data.photo && (
+            <img
+              src={data.photo}
+              className="w-[240px] h-[240px] border rounded-md object-cover"
+            />
+          )}
+          {/* <===========book mark pin ====================> */}
+          {/* <RiPushpinFill
             className={cn(
-              `duration-100 absolute ease-linear opacity-100 top-[-8px] right-[-11px] text-red-500`,
+              `duration-100 absolute ease-linear opacity-100 top-[-5px] right-[-5px] text-red-500`,
               {
                 "right-[-20px] top-[-15px] opacity-0": menu,
               }
             )}
-          />
+          /> */}
           <BsThreeDotsVertical
             onClick={() => setMenu(true)}
             className={cn(
               `duration-100 absolute ease-linear opacity-100 top-2 text-black dark:text-white  md:hidden  group-hover:block `,
-              { "right-[-25px]": side },
-              { "left-[-25px]": !side }
+              { "left-[-25px]": side == "left" },
+              { "right-[-25px]": side == "right" }
             )}
           />
           <div
@@ -73,9 +95,10 @@ const SingleChat = ({ side, data }) => {
             <div
               ref={menuRef}
               className={cn(
-                "absolute flex z-30 flex-col  font-semibold text-xs  rounded-md  top-full lg:top-0  p-1 bg-white border text-gray-500",
-                { " right-0 lg:right-[-122px] ": side == "left" },
-                { "left-0  lg:left-[-122px] ": !side }
+                "absolute flex z-30 flex-col  font-semibold text-xs  rounded-md  top-0 bg-white border text-gray-500",
+                { "w-fit right-[-150px]  ": side == "right" },
+                { "left-0  lg:left-[-122px] ": side == "left" },
+                { "left-0  top-1/2": data.photo }
               )}
             >
               <div className="p-1 mb-1 bg-slate-100  rounded-md flex gap-2 justify-center text-lg items-center">
@@ -100,10 +123,10 @@ const SingleChat = ({ side, data }) => {
             </div>
           )}
         </div>
-        <p className="text-sm font-semibold text-slate-500 dark:text-slate-300 px-2">
-          12.00pm
-        </p>{" "}
-      </div>
+      </div>{" "}
+      <p className="text-sm text-center font-semibold text-slate-500 dark:text-slate-300 px-2">
+        12.00pm
+      </p>{" "}
     </div>
   );
 };

@@ -6,24 +6,26 @@ const chatSlice = createSlice({
   name: "chat",
   initialState: {
     chats: [],
+    onlineUser: [],
     message: null,
     error: null,
+    loader: false,
   },
   reducers: {
     setMessageEmpty: (state) => {
       state.message = null;
       state.error = null;
     },
+    setOnlineUser: (state, action) => {
+      state.onlineUser = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
       // createchat
-      .addCase(createChat.pending, (state, action) => {
-        state.loader = true;
-      })
+      .addCase(createChat.pending, (state, action) => {})
       .addCase(createChat.fulfilled, (state, action) => {
         state.chats.push(action.payload.data);
-        state.loader = false;
       })
       // get chat by user
       .addCase(getChatByUser.pending, (state, action) => {
@@ -39,7 +41,7 @@ const chatSlice = createSlice({
 // selectors
 export const getChat = (state) => state.chat;
 // actions
-export const { setMessageEmpty } = chatSlice.actions;
+export const { setMessageEmpty, setOnlineUser } = chatSlice.actions;
 
 // export
 export default chatSlice.reducer;

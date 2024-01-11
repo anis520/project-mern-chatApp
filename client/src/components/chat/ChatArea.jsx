@@ -34,6 +34,8 @@ const ChatArea = () => {
   const emojiRef = useRef(null);
   const { theme } = useSelector((state) => state.theme);
   const { users } = useSelector((state) => state.user);
+  const { onlineUser } = useSelector((state) => state.chat);
+
   const [info, setInfo] = useState(false);
   const handleContextMenu = (event) => {
     event.preventDefault();
@@ -47,29 +49,28 @@ const ChatArea = () => {
     const findData = users?.find((item) => item._id == params.id);
 
     setActiveUser(findData);
-    dispatch(getChatByUser(activeUser?._id));
-  }, [params, activeUser, users]);
+    dispatch(getChatByUser(params.id));
+  }, [params, activeUser, users, dispatch]);
   const handleSendMessage = (e) => {
-    if (e.key == "Enter") {
-      if (file) {
-        const data = new FormData();
-        data.append("message", message);
-        data.append("receiverId", activeUser._id);
-        data.append("chat-photo", file);
+    e.preventDefault();
 
-        dispatch(createChat(data));
-      } else {
-        dispatch(createChat({ message, receiverId: activeUser._id }));
-      }
-      setMessage("");
+    if (file) {
+      const data = new FormData();
+      data.append("message", message);
+      data.append("receiverId", activeUser._id);
+
+      data.append("chat-photo", file);
+      dispatch(createChat(data));
+    } else {
+      message && dispatch(createChat({ message, receiverId: activeUser._id }));
     }
+    setMessage("");
+    setFile(null);
   };
+
   return (
     <div className="fixed  top-0 right-0 w-10/12 lg:w-9/12 h-screen flex   ">
       <div
-        // style={{
-        //   backgroundImage: `url(${"https://images.unsplash.com/photo-1629197238245-3c7497e96b41?q=80&w=1442&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"})`,
-        // }}
         className={cn(
           "h-full duration-300 md:ease-in bg-slate-50  w-full md:w-9/12 relative",
           {
@@ -86,8 +87,14 @@ const ChatArea = () => {
             </p>
             <div className="text-xs  sm:text-sm font-semibold text-zinc-500 dark:text-zinc-400 flex items-center">
               {" "}
-              <BsDot className="text-2xl text-green-400" />
-              Online
+              {onlineUser?.some((d) => d._id == activeUser?._id) ? (
+                <>
+                  <span className="bg-green-400 w-2 h-2 rounded-full me-3"></span>
+                  Online
+                </>
+              ) : (
+                <p>12 minites ago</p>
+              )}
             </div>
           </div>
           <div className="ms-auto flex items-center gap-4 dark:text-white">
@@ -99,8 +106,7 @@ const ChatArea = () => {
         {/* chat body  */}
         <ChatBody activeUser={activeUser} />
         {/* chat body  footer  */}
-        <div className="h-16 p-4 w-full bg-white dark:bg-darkBg  border-t dark:border-slate-600 absolute bottom-0 left-0 flex items-center gap-2 z-30">
-          <button className="text-[25px]">👍</button>
+        <div className="h-auto p-4 w-full bg-white dark:bg-darkBg  border-t dark:border-slate-600 absolute bottom-0 left-0 flex items-end gap-2 z-30">
           <button className="text-[25px] dark:text-white mt-1">
             <label htmlFor="photo">
               <input
@@ -114,14 +120,42 @@ const ChatArea = () => {
               <MdOutlinePhotoCameraBack />
             </label>
           </button>
-          <input
-            type="text"
-            className="bg-slate-100 border w-full py-1 px-2 rounded-md outline-none"
-            placeholder="type your message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={handleSendMessage}
-          />{" "}
+          <form
+            onSubmit={handleSendMessage}
+            action=""
+            className="flex w-full gap-2"
+          >
+            <div className="bg-slate-100 border w-full py-1 px-2 rounded-md space-y-2">
+              {file && (
+                <div className="h-16 w-16 rounded-md border  relative">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    className="h-full w-full object-cover"
+                    alt=""
+                  />
+                  <button
+                    className="absolute top-0 right-1"
+                    onClick={() => setFile(null)}
+                  >
+                    x
+                  </button>
+                </div>
+              )}
+              <input
+                type="text"
+                className="bg-transparent outline-none"
+                placeholder="type your message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />{" "}
+            </div>
+            <button
+              type="submit"
+              className={`bg-${theme} h-fit text-white py-1 px-3 mt-auto font-semibold rounded-md  text-center`}
+            >
+              Send
+            </button>
+          </form>{" "}
           <div ref={emojiRef} className="fixed bottom-[70px] right-[40px]">
             {" "}
             {emoji && <EmojiPicker />}
@@ -132,11 +166,6 @@ const ChatArea = () => {
               😊
             </button>{" "}
           </div>
-          <button
-            className={`bg-${theme} text-white py-1 px-3 font-semibold rounded-md  text-center`}
-          >
-            Send
-          </button>
         </div>
       </div>
 

@@ -23,9 +23,8 @@ export const ChatCreate = expressAsyncHandler(async (req, res) => {
         receiverId,
         message,
       });
-
-      res.status(200).json({ data });
     }
+    res.status(200).json({ data });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -45,7 +44,6 @@ export const GetAllChats = expressAsyncHandler(async (req, res) => {
         },
       ],
     });
-    console.log(data);
     res.status(200).json({ data });
   } catch (error) {
     res.status(404).json({ message: error.message });
