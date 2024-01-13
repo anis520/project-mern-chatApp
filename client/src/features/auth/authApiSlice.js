@@ -167,7 +167,7 @@ export const uploadPhoto = createAsyncThunk(
     try {
       const response = await axios.post(
         `http://localhost:9000/api/v1/profile-photo/${data.id}`,
-        data.data,
+        data,
         {
           withCredentials: true,
         }

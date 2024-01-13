@@ -13,6 +13,7 @@ import {
 import { BsBookmarkHeartFill, BsThreeDotsVertical } from "react-icons/bs";
 import { CiFaceSmile, CiHeart } from "react-icons/ci";
 import { ImSad } from "react-icons/im";
+import moment from "moment";
 
 const SingleChat = ({ side, data }) => {
   const [menu, setMenu] = useState(false);
@@ -125,7 +126,7 @@ const SingleChat = ({ side, data }) => {
         </div>
       </div>{" "}
       <p className="text-sm text-center font-semibold text-slate-500 dark:text-slate-300 px-2">
-        12.00pm
+        {moment(data.createdAt).startOf("").fromNow()}
       </p>{" "}
     </div>
   );

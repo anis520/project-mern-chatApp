@@ -28,10 +28,13 @@ const ChatBody = ({ activeUser }) => {
           <>
             {/* <========================activeUser info==========================> */}
             <div className="w-24 h-24 mx-auto mt-10">
-              <AvaterUI name={activeUser?.name} photo={activeUser?.photo} />
+              <AvaterUI
+                name={activeUser?.userInfo?.name}
+                photo={activeUser?.userInfo?.photo}
+              />
             </div>
-            <p className="text-center text-2xl font-semibold mt-2  ">
-              {activeUser?.name}
+            <p className="text-center dark:text-white text-2xl font-semibold mt-2  ">
+              {activeUser?.userInfo?.name}
             </p>
             <p className="text-center text-gray-400 text-sm font-semibold mt-2 mb-6">
               you can now chat with eatch others

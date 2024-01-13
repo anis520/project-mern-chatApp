@@ -6,8 +6,13 @@ import { Outlet } from "react-router-dom";
 import Activate from "../Activate/Activate";
 import { io } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
-import { setOnlineUser } from "../../features/chat/chatSlice";
+import { setOnlineUser, setRealTimeMsg } from "../../features/chat/chatSlice";
+import messageSound from "../../assets/messenger_noti.mp3";
+import { Howl } from "howler";
+
 const Home = () => {
+  const [playSound, setPlaySound] = useState(false);
+
   const { user } = useSelector((state) => state.auth);
   const { onlineUser } = useSelector((state) => state.chat);
   const dispatch = useDispatch();
@@ -22,7 +27,28 @@ const Home = () => {
       // setOnlineUser(data);
       dispatch(setOnlineUser(data));
     });
+
+    socket.current.on("realTimeMsgGet", (data) => {
+      dispatch(setRealTimeMsg(data));
+      setPlaySound(true);
+    });
   }, [dispatch, user]);
+  useEffect(() => {
+    // Check the condition to play the sound
+    if (playSound) {
+      // Define the sound settings
+      const sound = new Howl({
+        src: [messageSound], // Provide the path to your sound file
+        volume: 2, // Adjust the volume as needed
+      });
+
+      // Play the sound
+      sound.play();
+
+      // Set playSound back to false after the sound is played
+      setPlaySound(false);
+    }
+  }, [playSound]);
   return (
     <div>
       <Activate />

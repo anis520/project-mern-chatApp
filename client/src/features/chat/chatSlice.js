@@ -10,14 +10,19 @@ const chatSlice = createSlice({
     message: null,
     error: null,
     loader: false,
+    chatSuccess: false,
   },
   reducers: {
     setMessageEmpty: (state) => {
       state.message = null;
       state.error = null;
+      state.chatSuccess = false;
     },
     setOnlineUser: (state, action) => {
       state.onlineUser = action.payload;
+    },
+    setRealTimeMsg: (state, action) => {
+      state.chats.push(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -26,6 +31,7 @@ const chatSlice = createSlice({
       .addCase(createChat.pending, (state, action) => {})
       .addCase(createChat.fulfilled, (state, action) => {
         state.chats.push(action.payload.data);
+        state.chatSuccess = action.payload.data;
       })
       // get chat by user
       .addCase(getChatByUser.pending, (state, action) => {
@@ -41,7 +47,8 @@ const chatSlice = createSlice({
 // selectors
 export const getChat = (state) => state.chat;
 // actions
-export const { setMessageEmpty, setOnlineUser } = chatSlice.actions;
+export const { setMessageEmpty, setOnlineUser, setRealTimeMsg } =
+  chatSlice.actions;
 
 // export
 export default chatSlice.reducer;

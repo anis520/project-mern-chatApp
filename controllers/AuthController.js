@@ -11,6 +11,7 @@ import {
 } from "../mails/sendemai.js";
 import { dotsToHyphens, hyphensToDots } from "../helpers/createSlug.js";
 import { uploadcloud } from "../utils/cloudnary.js";
+import Chat from "../models/Chat.js";
 
 export const UserLogin = asynchandler(async (req, res) => {
   const { email, password } = req.body;
@@ -323,12 +324,30 @@ export const VerfiyUserTokenPassword = asynchandler(async (req, res) => {
 // get all users
 export const getAllUsers = asynchandler(async (req, res) => {
   // all user
+  const logedUser = req.me._id;
   const users = await User.find().select("-password");
-  // const users = await User.find({
-  //   $and: [{ isverfied: true }, { _id: { $ne: req.me._id } }],
-  // }).select("-password");
+  const usersWithLatestmsg = [];
+  for (let i = 0; i < users.length; i++) {
+    const lastMsg = await Chat.findOne({
+      $or: [
+        {
+          $and: [
+            { senderId: { $eq: logedUser } },
+            { receiverId: { $eq: users[i]._id } },
+          ],
+        },
+        {
+          $and: [
+            { senderId: { $eq: users[i]._id } },
+            { receiverId: { $eq: logedUser } },
+          ],
+        },
+      ],
+    }).sort({ createdAt: -1 });
+    usersWithLatestmsg.push({ userInfo: users[i], lastMsg: lastMsg });
+  }
 
-  return res.status(200).json({ users });
+  return res.status(200).json({ users: usersWithLatestmsg });
 });
 // upload profile photo
 export const profilePhotoController = asynchandler(async (req, res) => {

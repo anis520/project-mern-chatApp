@@ -29,6 +29,14 @@ io.on("connection", (socket) => {
     io.emit("userarray", users);
   });
 
+  socket.on("realTimeMsgSend", (data) => {
+    const checkIsOnline = users.find((d) => d._id == data.receiverId);
+    console.log(checkIsOnline);
+    if (checkIsOnline) {
+      socket.to(checkIsOnline.socketId).emit("realTimeMsgGet", data);
+    }
+  });
+
   socket.on("disconnect", (data) => {
     console.log("user disconnected" + data.bgRed);
     removeuserdata(socket.id);

@@ -19,12 +19,14 @@ const Profile = () => {
   };
 
   const handleSubmit = () => {
-    const data = new FormData();
+    if (file) {
+      const data = new FormData();
 
-    data.append("profile-photo", file);
-
-    console.log(data);
-    dispatch(uploadPhoto({ data, id: user._id }));
+      data.append("profile-photo", file);
+      data.append("id", user._id);
+      console.log(data);
+      dispatch(uploadPhoto(data));
+    }
     setFile(null);
   };
 

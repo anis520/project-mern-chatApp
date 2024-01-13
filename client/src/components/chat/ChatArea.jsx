@@ -20,10 +20,12 @@ import ChatBody from "./chatBody/ChatBody";
 import { useParams } from "react-router-dom";
 import AvaterUI from "../AvaterUI/AvaterUI";
 import { createChat, getChatByUser } from "../../features/chat/chatApiSlice";
+import { setMessageEmpty } from "../../features/chat/chatSlice";
+import { io } from "socket.io-client";
 
 const ChatArea = () => {
   const params = useParams();
-
+  const socket = useRef();
   const [activeUser, setActiveUser] = useState(null);
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
@@ -34,7 +36,7 @@ const ChatArea = () => {
   const emojiRef = useRef(null);
   const { theme } = useSelector((state) => state.theme);
   const { users } = useSelector((state) => state.user);
-  const { onlineUser } = useSelector((state) => state.chat);
+  const { onlineUser, chatSuccess } = useSelector((state) => state.chat);
 
   const [info, setInfo] = useState(false);
   const handleContextMenu = (event) => {
@@ -46,7 +48,7 @@ const ChatArea = () => {
   emojiDiv(emojiRef, () => setEmoji(false));
 
   useEffect(() => {
-    const findData = users?.find((item) => item._id == params.id);
+    const findData = users?.find((item) => item.userInfo._id == params.id);
 
     setActiveUser(findData);
     dispatch(getChatByUser(params.id));
@@ -57,16 +59,28 @@ const ChatArea = () => {
     if (file) {
       const data = new FormData();
       data.append("message", message);
-      data.append("receiverId", activeUser._id);
+      data.append("receiverId", activeUser.userInfo._id);
 
       data.append("chat-photo", file);
       dispatch(createChat(data));
     } else {
-      message && dispatch(createChat({ message, receiverId: activeUser._id }));
+      message &&
+        dispatch(createChat({ message, receiverId: activeUser.userInfo._id }));
     }
     setMessage("");
     setFile(null);
+    setEmoji(false);
   };
+  useEffect(() => {
+    socket.current = io("ws://localhost:8000");
+    if (chatSuccess) {
+      socket.current.emit("realTimeMsgSend", chatSuccess);
+    }
+
+    dispatch(setMessageEmpty());
+  }, [chatSuccess]);
+
+  useEffect(() => {}, []);
 
   return (
     <div className="fixed  top-0 right-0 w-10/12 lg:w-9/12 h-screen flex   ">
@@ -83,11 +97,11 @@ const ChatArea = () => {
         <div className="h-16   w-full bg-white dark:bg-darkBg dark:border-b dark:border-slate-600  shadow-sm absolute top-0 left-0 px-4 flex items-center z-30">
           <div className="cursor-pointer" onClick={() => setInfo(!info)}>
             <p className="text-zinc-900 dark:text-white sm:text-xl font-semibold">
-              {activeUser?.name}
+              {activeUser?.userInfo.name}
             </p>
             <div className="text-xs  sm:text-sm font-semibold text-zinc-500 dark:text-zinc-400 flex items-center">
               {" "}
-              {onlineUser?.some((d) => d._id == activeUser?._id) ? (
+              {onlineUser?.some((d) => d._id == activeUser?.userInfo._id) ? (
                 <>
                   <span className="bg-green-400 w-2 h-2 rounded-full me-3"></span>
                   Online
@@ -143,7 +157,7 @@ const ChatArea = () => {
               )}
               <input
                 type="text"
-                className="bg-transparent outline-none"
+                className="bg-transparent outline-none w-full"
                 placeholder="type your message"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
@@ -158,7 +172,15 @@ const ChatArea = () => {
           </form>{" "}
           <div ref={emojiRef} className="fixed bottom-[70px] right-[40px]">
             {" "}
-            {emoji && <EmojiPicker />}
+            {emoji && (
+              <EmojiPicker
+                previewConfig={{ showPreview: false }}
+                skinTonesDisabled={true}
+                onEmojiClick={(e) =>
+                  setMessage((prevstate) => prevstate + " " + e.emoji)
+                }
+              />
+            )}
             <button
               className="fixed bottom-[15px] right-[87px] text-[22px]"
               onClick={() => setEmoji(!emoji)}
@@ -193,13 +215,16 @@ const ChatArea = () => {
         </div>
 
         <div className="w-24 h-24  mx-auto my-4                                                                                                                         ">
-          <AvaterUI name={activeUser?.name} photo={activeUser?.photo} />
+          <AvaterUI
+            name={activeUser?.userInfo.name}
+            photo={activeUser?.userInfo.photo}
+          />
         </div>
 
         <div className="bg-white dark:bg-slate-400   m-4 p-4 text-center font-semibold text-xl rounded-md">
-          <p className="dark:text-white">{activeUser?.name}</p>
+          <p className="dark:text-white">{activeUser?.userInfo.name}</p>
           <p className="py-2 text-base text-slate-500 dark:text-slate-200">
-            {activeUser?.email}
+            {activeUser?.userInfo.email}
           </p>
         </div>
       </div>

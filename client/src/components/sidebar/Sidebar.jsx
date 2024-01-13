@@ -26,7 +26,7 @@ const Sidebar = ({ onlineUser }) => {
   const { user } = useAuthUser();
 
   useEffect(() => {
-    const data = users?.filter((item) => item._id != user._id);
+    const data = users?.filter((item) => item.userInfo._id != user._id);
 
     setFilterUser(data);
   }, [users, user._id]);
@@ -74,18 +74,18 @@ const Sidebar = ({ onlineUser }) => {
               <Link
                 key={index}
                 className="block"
-                to={`/messages/t/${item._id}`}
+                to={`/messages/t/${item.userInfo._id}`}
               >
                 <div
                   className={cn(
                     ` relative hover:bg-slate-100   cursor-pointer w-fit lg:w-full  bg-white dark:bg-darkBg mx-auto  p-2 rounded-md shadow-sm flex items-center sm:gap-2`,
                     {
                       " border-b-2 border-gray-500 dark:border-gray-300":
-                        id == item._id,
+                        id == item.userInfo._id,
                     }
                   )}
                 >
-                  {onlineUser?.some((d) => d._id == item._id) && (
+                  {onlineUser?.some((d) => d._id == item.userInfo._id) && (
                     <p className="h-[8px] w-[8px] rounded-full bg-green-500 absolute bottom-1 left-1"></p>
                   )}
                   {/* <img
@@ -94,15 +94,19 @@ const Sidebar = ({ onlineUser }) => {
                   alt=""
                 /> */}
                   <div className="w-8 lg:w-14 h-8 lg:h-14 text-2xl">
-                    <AvaterUI photo={item.photo} name={item.name} />
+                    <AvaterUI
+                      photo={item.userInfo.photo}
+                      name={item.userInfo.name}
+                    />
                   </div>
                   <div className="font-semibold text-lg">
                     <div className="hidden lg:block">
                       <p className="text-slate-600 dark:text-white">
-                        {item.name}
+                        {item.userInfo.name}
                       </p>
                       <p className="text-slate-400 text-sm">
-                        last seen 1 minites ago
+                        {item?.lastMsg?.senderId == user._id && "you : "}
+                        {item?.lastMsg?.message.slice(0, 8)} . .
                       </p>
                     </div>
                   </div>
