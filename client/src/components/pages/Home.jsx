@@ -9,6 +9,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setOnlineUser, setRealTimeMsg } from "../../features/chat/chatSlice";
 import messageSound from "../../assets/messenger_noti.mp3";
 import { Howl } from "howler";
+import { getAllUsers } from "../../features/user/userApiSlice";
+import { setRealTimeLastMsg } from "../../features/user/userSlice";
 
 const Home = () => {
   const [playSound, setPlaySound] = useState(false);
@@ -30,6 +32,7 @@ const Home = () => {
 
     socket.current.on("realTimeMsgGet", (data) => {
       dispatch(setRealTimeMsg(data));
+
       setPlaySound(true);
     });
   }, [dispatch, user]);
@@ -49,6 +52,10 @@ const Home = () => {
       setPlaySound(false);
     }
   }, [playSound]);
+
+  useEffect(() => {
+    dispatch(getAllUsers());
+  }, [dispatch]);
   return (
     <div>
       <Activate />

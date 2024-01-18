@@ -35,3 +35,22 @@ export const getChatByUser = createAsyncThunk(
     }
   }
 );
+//get update chat
+export const getUpdateChat = createAsyncThunk(
+  "chat/getUpdateChat",
+  async (data) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:9000/api/v1/updateChat/${data.id}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);

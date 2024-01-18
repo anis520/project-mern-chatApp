@@ -1,3 +1,4 @@
+import Landing from "../components/Landing/Landing";
 import Profile from "../components/Profile/Profile";
 import ChatArea from "../components/chat/ChatArea";
 import Welcome from "../components/chat/Welcome";
@@ -12,13 +13,14 @@ const privateRouter = [
       {
         element: <Home />,
         children: [
-          { path: "/", element: <Welcome /> },
+          { path: "/app", element: <Welcome /> },
           { path: "/messages/t/:id", element: <ChatArea /> },
         ],
       },
       { path: "/profile", element: <Profile /> },
     ],
   },
+  { path: "/", element: <Landing /> },
 ];
 
 // export router

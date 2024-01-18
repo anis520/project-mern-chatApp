@@ -5,3 +5,7 @@
 .theme {
   z-index: 11111% !important;
 }
+
+a {
+  display: block;
+}

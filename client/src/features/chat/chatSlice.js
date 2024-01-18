@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createChat, getChatByUser } from "./chatApiSlice";
+import { createChat, getChatByUser, getUpdateChat } from "./chatApiSlice";
 
 // create chat slice
 const chatSlice = createSlice({
@@ -40,6 +40,12 @@ const chatSlice = createSlice({
       .addCase(getChatByUser.fulfilled, (state, action) => {
         state.chats = action.payload.data;
         state.loader = false;
+      })
+      //udate chat
+      .addCase(getUpdateChat.fulfilled, (state, action) => {
+        state.chats[
+          state.chats.findIndex((data) => data._id === action.payload._id)
+        ] = action.payload;
       });
   },
 });

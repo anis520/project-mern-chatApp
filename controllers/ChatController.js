@@ -49,3 +49,14 @@ export const GetAllChats = expressAsyncHandler(async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 });
+export const updateChat = expressAsyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { bookmark } = req.body;
+
+    const data = await Chat.findByIdAndUpdate(id, { bookmark }, { new: true });
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+});

@@ -1,21 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  BsCameraVideoFill,
-  BsDot,
-  BsFillTelephoneFill,
-  BsReception0,
-} from "react-icons/bs";
+import { BsCameraVideoFill, BsFillTelephoneFill } from "react-icons/bs";
 import { MdOutlinePhotoCameraBack } from "react-icons/md";
 
 import EmojiPicker from "emoji-picker-react";
-import userAvatar from "../../../public/user.avif";
 import cn from "../../utils/cn";
-import { RiPushpinFill } from "react-icons/ri";
 
 import { useDispatch, useSelector } from "react-redux";
 import { useOnclickOutside } from "../../hooks/useOnclickOutside";
 import { useOnclickOutside as emojiDiv } from "../../hooks/useOnclickOutside";
-import SingleChat from "../SingleChat";
 import ChatBody from "./chatBody/ChatBody";
 import { useParams } from "react-router-dom";
 import AvaterUI from "../AvaterUI/AvaterUI";

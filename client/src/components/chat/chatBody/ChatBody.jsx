@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import SingleChat from "../../SingleChat";
 import { useDispatch, useSelector } from "react-redux";
-import { getChatByUser } from "../../../features/chat/chatApiSlice";
 import AvaterUI from "../../AvaterUI/AvaterUI";
 
 const ChatBody = ({ activeUser }) => {

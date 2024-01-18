@@ -8,6 +8,7 @@ const userSlice = createSlice({
     permission: null,
     role: null,
     users: null,
+    loader: false,
     error: null,
     message: null,
   },
@@ -16,14 +17,24 @@ const userSlice = createSlice({
       state.message = null;
       state.error = null;
     },
+    setRealTimeLastMsg: (state, action) => {
+      state.users[
+        state.users.findIndex((data) => data.userInfo._id === action.payload)
+      ] = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getAllUsers.rejected, (state, action) => {
-        state.error = action.error.message;
+      .addCase(getAllUsers.pending, (state, action) => {
+        state.loader = true;
       })
       .addCase(getAllUsers.fulfilled, (state, action) => {
         state.users = action.payload.users;
+        state.loader = false;
+      })
+      .addCase(getAllUsers.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.loader = false;
       });
   },
 });
@@ -31,7 +42,7 @@ const userSlice = createSlice({
 // selectors
 export const getAllPermissionData = (state) => state.user;
 // actions
-export const { setMessageEmpty } = userSlice.actions;
+export const { setMessageEmpty, setRealTimeLastMsg } = userSlice.actions;
 
 // export
 export default userSlice.reducer;

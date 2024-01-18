@@ -5,7 +5,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import {
   activateAccountByOTP,
-  activation,
   resendActivation,
 } from "../../features/auth/authApiSlice";
 import { getAuthData, setMessageEmpty } from "../../features/auth/authSlice";

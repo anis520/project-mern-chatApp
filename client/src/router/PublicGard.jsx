@@ -5,7 +5,7 @@ const PublicGard = () => {
   const { user } = useSelector((state) => state.auth);
 
   if (localStorage.getItem("user")) {
-    return user ? <Navigate to="/" /> : <Outlet />;
+    return user ? <Navigate to="/app" /> : <Outlet />;
   }
 
   return <Outlet />;

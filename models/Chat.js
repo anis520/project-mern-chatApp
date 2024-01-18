@@ -15,6 +15,7 @@ const chatSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    reaction: { type: String, enum: ["like", "love", "smile", "sad"] },
     photo: { type: String, trim: true },
     status: {
       type: String,
@@ -22,7 +23,11 @@ const chatSchema = mongoose.Schema(
       default: "sent",
     },
     trash: {
-      type: String,
+      type: Boolean,
+      default: false,
+    },
+    bookmark: {
+      type: Boolean,
       default: false,
     },
   },

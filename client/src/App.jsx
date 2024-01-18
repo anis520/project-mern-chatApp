@@ -16,9 +16,6 @@ function App() {
   const { mode } = useSelector((state) => state.theme);
 
   useEffect(() => {
-    dispatch(getAllUsers());
-  }, []);
-  useEffect(() => {
     if (localStorage.getItem("user")) {
       dispatch(getLoggedInUser());
     }
