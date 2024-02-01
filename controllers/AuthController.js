@@ -15,7 +15,6 @@ import Chat from "../models/Chat.js";
 
 export const UserLogin = asynchandler(async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body);
 
   if (!email | !password) {
     res.json({ message: "all field are required" });

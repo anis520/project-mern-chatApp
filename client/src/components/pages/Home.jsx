@@ -10,7 +10,10 @@ import { setOnlineUser, setRealTimeMsg } from "../../features/chat/chatSlice";
 import messageSound from "../../assets/messenger_noti.mp3";
 import { Howl } from "howler";
 import { getAllUsers } from "../../features/user/userApiSlice";
-import { setRealTimeLastMsg } from "../../features/user/userSlice";
+import {
+  setRealTimeLastMsg,
+  setTypingData,
+} from "../../features/user/userSlice";
 
 const Home = () => {
   const [playSound, setPlaySound] = useState(false);
@@ -20,6 +23,7 @@ const Home = () => {
   const dispatch = useDispatch();
 
   const socket = useRef();
+
   useEffect(() => {
     socket.current = io("ws://localhost:8000");
     //send login user as active
@@ -35,7 +39,11 @@ const Home = () => {
 
       setPlaySound(true);
     });
-  }, [dispatch, user]);
+
+    socket.current.on("typingAnimationGet", (data) => {
+      dispatch(setTypingData(data));
+    });
+  }, []);
   useEffect(() => {
     // Check the condition to play the sound
     if (playSound) {

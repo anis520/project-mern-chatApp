@@ -14,8 +14,11 @@ import AvaterUI from "../AvaterUI/AvaterUI";
 import { createChat, getChatByUser } from "../../features/chat/chatApiSlice";
 import { setMessageEmpty } from "../../features/chat/chatSlice";
 import { io } from "socket.io-client";
+import messageSound from "../../assets/s8_sms.mp3";
 
+import { Howl } from "howler";
 const ChatArea = () => {
+  const [typingAnimation, setTypingAnimation] = useState(null);
   const params = useParams();
   const socket = useRef();
   const [activeUser, setActiveUser] = useState(null);
@@ -28,6 +31,7 @@ const ChatArea = () => {
   const emojiRef = useRef(null);
   const { theme } = useSelector((state) => state.theme);
   const { users } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.auth);
   const { onlineUser, chatSuccess } = useSelector((state) => state.chat);
 
   const [info, setInfo] = useState(false);
@@ -62,17 +66,41 @@ const ChatArea = () => {
     setMessage("");
     setFile(null);
     setEmoji(false);
+
+    const sound = new Howl({
+      src: [messageSound], // Provide the path to your sound file
+      volume: 2, // Adjust the volume as needed
+    });
+
+    // Play the sound
+    sound.play();
   };
   useEffect(() => {
     socket.current = io("ws://localhost:8000");
     if (chatSuccess) {
       socket.current.emit("realTimeMsgSend", chatSuccess);
+      socket.current.emit("typingAnimationSend", {
+        msg: "",
+        reciverId: activeUser.userInfo._id,
+        senderId: user._id,
+      });
     }
 
     dispatch(setMessageEmpty());
+
+    // socket.current.emit("typingAnimationSend", null);
   }, [chatSuccess]);
 
-  useEffect(() => {}, []);
+  const handleChatValueChange = (e) => {
+    setMessage(e.target.value);
+    // if (message !== "") {
+    socket.current.emit("typingAnimationSend", {
+      msg: e.target.value,
+      reciverId: activeUser.userInfo._id,
+      senderId: user._id,
+    });
+    // }
+  };
 
   return (
     <div className="fixed  top-0 right-0 w-10/12 lg:w-9/12 h-screen flex   ">
@@ -110,7 +138,7 @@ const ChatArea = () => {
         </div>
 
         {/* chat body  */}
-        <ChatBody activeUser={activeUser} />
+        <ChatBody activeUser={activeUser} typingAnimation={typingAnimation} />
         {/* chat body  footer  */}
         <div className="h-auto p-4 w-full bg-white dark:bg-darkBg  border-t dark:border-slate-600 absolute bottom-0 left-0 flex items-end gap-2 z-30">
           <button className="text-[25px] dark:text-white mt-1">
@@ -152,7 +180,7 @@ const ChatArea = () => {
                 className="bg-transparent outline-none w-full"
                 placeholder="type your message"
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={handleChatValueChange}
               />{" "}
             </div>
             <button

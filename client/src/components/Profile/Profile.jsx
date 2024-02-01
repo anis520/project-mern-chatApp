@@ -1,18 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AvaterUI from "../AvaterUI/AvaterUI";
 import { Link } from "react-router-dom";
 import { logoutUser, uploadPhoto } from "../../features/auth/authApiSlice";
 import cn from "../../utils/cn";
+import { io } from "socket.io-client";
 
 const Profile = () => {
   const dispatch = useDispatch();
+  const socket = useRef();
   const { theme } = useSelector((state) => state.theme);
   const { user, loader } = useSelector((state) => state.auth);
   const [file, setFile] = useState(null);
-
+  useEffect(() => {
+    socket.current = io("ws://localhost:8000");
+  }, []);
   const logoutHandler = () => {
     dispatch(logoutUser());
+    socket.current.emit("removeLogoutUser", user?._id);
   };
   const handleFileUpload = (e) => {
     setFile(e.target.files[0]);
@@ -66,7 +71,7 @@ const Profile = () => {
 
         <p>{user.name}</p>
 
-        <Link to="/">Home</Link>
+        <Link to="/app">Home</Link>
         <br />
         <button onClick={logoutHandler}>Logout</button>
       </div>

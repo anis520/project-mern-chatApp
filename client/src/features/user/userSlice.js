@@ -11,11 +11,15 @@ const userSlice = createSlice({
     loader: false,
     error: null,
     message: null,
+    typing: null,
   },
   reducers: {
     setMessageEmpty: (state) => {
       state.message = null;
       state.error = null;
+    },
+    setTypingData: (state, action) => {
+      state.typing = action.payload;
     },
     setRealTimeLastMsg: (state, action) => {
       state.users[
@@ -42,7 +46,8 @@ const userSlice = createSlice({
 // selectors
 export const getAllPermissionData = (state) => state.user;
 // actions
-export const { setMessageEmpty, setRealTimeLastMsg } = userSlice.actions;
+export const { setMessageEmpty, setRealTimeLastMsg, setTypingData } =
+  userSlice.actions;
 
 // export
 export default userSlice.reducer;
